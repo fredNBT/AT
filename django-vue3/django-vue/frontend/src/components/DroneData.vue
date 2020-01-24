@@ -18,22 +18,28 @@ export default {
   props:['headers'],
   data() {
     return {
-      drones: [],
+      drones: [
+       
+      ],
       columns:['id','Name','Description','LastOrder','LastOrderTime',"actions"],
     }
   },
   methods: {    
       greet: function(RowNumber){
-        this.$emit('GoToMap', RowNumber)
+      this.$emit('GoToMap', RowNumber)
       }
   },
   async created() {
     try {
       const res = await axios.get('http://localhost:8000/drones/')
-      console.log(this.drones = res.data);
-    this.drones = Object.entries(JSON.parse(res.data));
+      this.drones = Object.entries(JSON.parse(res.data));
     } catch(e) {
-      //console.error(e)
+      console.error(e)
+      const res = await axios.get('http://localhost:8000/drones/')
+      let stringy = JSON.stringify(res.data)
+      console.log(stringy)
+      this.drones = JSON.parse(stringy)
+      console.log(this.drones)
     }
   },
 }

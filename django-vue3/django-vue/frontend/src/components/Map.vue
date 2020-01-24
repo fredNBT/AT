@@ -7,10 +7,10 @@
     <div style="display:flex;  justify-content: space-evenly;">
       <v-btn v-on:click="greet('Map')">Back to Overview</v-btn>
       <div style="display:flex; flex-direction: column;  ">
-        <v-btn style="margin-bottom:50px" v-on:click="PostMQTT('DISARM')">
+        <v-btn style="margin-bottom:50px" v-on:click="PostMQTT('ARM')">
           <span left>UAV On</span>
         </v-btn>
-        <v-btn v-on:click="PostMQTT('ARM')">
+        <v-btn v-on:click="PostMQTT('DISARM')">
           <span left>UAV Off</span>
         </v-btn>
       </div>
@@ -40,7 +40,7 @@
         style="width: 50vw; height:50vh"
       >
         <gmap-custom-marker :marker="marker" >
-          <img src="../../src/assets/Tracking.gif" style="width:50px; height: 50px">
+          <img src="../../src/assets/DroneIcon.gif" style="width:150px; height: 150px">
         </gmap-custom-marker>
       </GmapMap>
 
@@ -60,7 +60,6 @@
         </div>
       </div>
     </div>
-
     <div style="height:20vh"></div>
   </div>
 </template>
@@ -87,11 +86,15 @@ export default {
   },
   created() {
     setInterval(this.FillConsole, 10000);
+    setInterval(this.DroneGPS, 1000);
   },
   mounted() {
     this.$refs.mymap.$mapPromise.then(() => {
-      alert("loaded");
     });
+  },
+  destroyed(){
+
+
   },
 
   methods: {
@@ -102,11 +105,19 @@ export default {
         }
       });
       if (this.ConsoleLog != res.data) {
-        console.log("diffrent");
-        //this.ConsoleLog = Object.entries(JSON.parse(res.data));
-        this.ConsoleLogs = res.data;
         console.log(this.ConsoleLog);
       }
+    },
+
+    async DroneGPS(){
+      const res = await axios.get("http://localhost:8000/drones/DroneGPS", {
+        params: {
+          Drone: this.SingleDrone
+        }
+      });
+      let stringy = JSON.stringify(res.data)
+      var obj = JSON.parse(stringy)
+      this.marker = {lat: obj.Lat, lng: obj.Lng}
     },
     greet: function(rowID) {
       this.$emit("GoToMap", "Map");

@@ -29,6 +29,11 @@ export default new Router({
       path:'/Details',
       name: 'details',
       component: About
+    },
+    {
+      path:'/Alarms',
+      name: 'details',
+      component: About
     }
   ],
   mode: 'history'
