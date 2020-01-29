@@ -11,5 +11,6 @@ urlpatterns = [
     path('PublishMQTT', views.PublishMQTT, name='PublishMQTT'),
     path('Console', views.Console, name='Console'),
     path('DroneGPS', views.DroneGPS, name='DroneGPS'),
-
+    path('AlarmState', views.AlarmState, name='AlarmState'),
+    path('ClearAllAlarms', views.ClearAllAlarms, name='ClearAllAlarms'),
 ]

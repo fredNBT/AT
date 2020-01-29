@@ -4,8 +4,7 @@ class Drone(models.Model):
     Name        = models.TextField()
     Description = models.TextField()
     LastOrder = models.TextField()
-    LastOrderTime = models.TextField()
-
+    Region = models.TextField()
 
 class Logs(models.Model):
     id = models.IntegerField(primary_key=True)

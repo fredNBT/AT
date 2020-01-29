@@ -18,10 +18,8 @@ export default {
   props:['headers'],
   data() {
     return {
-      drones: [
-       
-      ],
-      columns:['id','Name','Description','LastOrder','LastOrderTime',"actions"],
+      drones: [],
+      columns:['id','Name','Description','Region','LastOrder',"actions"],
     }
   },
   methods: {    

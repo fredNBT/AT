@@ -40,13 +40,11 @@
         style="width: 50vw; height:50vh"
       >
         <gmap-custom-marker :marker="marker" >
-          <img src="../../src/assets/DroneIcon.gif" style="width:150px; height: 150px">
+          <img src="../../src/assets/DroneIcon2.gif" style="width:70px; height: 70px">
         </gmap-custom-marker>
       </GmapMap>
 
-      <div
-        style="height:50vh;overflow-y: scroll; width: 20vw; background-color:black; color:white; margin-left:5px;"
-      >
+      <div id="ConsoleLogDiv" style="height:50vh;overflow-y: scroll; width: 20vw; background-color:black; color:white; margin-left:5px;">
         <p>Console</p>
         <div
           style="display:flex; "
@@ -85,7 +83,7 @@ export default {
     "gmap-custom-marker": GmapCustomMarker
   },
   created() {
-    setInterval(this.FillConsole, 10000);
+    setInterval(this.FillConsole, 1000);
     setInterval(this.DroneGPS, 1000);
   },
   mounted() {
@@ -106,6 +104,9 @@ export default {
       });
       if (this.ConsoleLog != res.data) {
         console.log(this.ConsoleLog);
+        this.ConsoleLogs = res.data;
+        var element = document.getElementById("ConsoleLogDiv");
+        element.scrollTop = element.scrollHeight;
       }
     },
 
@@ -116,8 +117,9 @@ export default {
         }
       });
       let stringy = JSON.stringify(res.data)
+      console.log(stringy)
       var obj = JSON.parse(stringy)
-      this.marker = {lat: obj.Lat, lng: obj.Lng}
+      this.marker = {lat: obj.Lat, lng: obj.Long}
     },
     greet: function(rowID) {
       this.$emit("GoToMap", "Map");

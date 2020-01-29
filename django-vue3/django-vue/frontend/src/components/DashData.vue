@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-navigation-drawer v-model="drawer" app class="indigo" style="margin-top:200px">
+    <v-navigation-drawer v-model="drawer" enable-resize-watcher app dark class="primary lighten-3" style="margin-top:200px">
       <v-list style="flex" left>
         <!-- <router-link to="/about">About</router-link> -->
         <v-list-item
@@ -49,7 +49,12 @@ export default {
         icons: "mdi-account-multiple-plus",
         text: "Register New Drone",
         route: "/About"
-      }
+      },
+          {
+        icons: "mdi-account-multiple-plus",
+        text: "About",
+        route: "/About"
+      },
     ]
   })
 };

@@ -22,11 +22,11 @@
       </button>
     </v-toolbar>
 
-    <button
+    <!-- <button
       class="btn btn-primary btn-margin"
       v-if="authenticated"
       @click="privateMessage()"
-    >Call Private</button>
+    >Call Private</button> -->
     {{ message }}
     <br>
     <Overview v-if="authenticated"></Overview>

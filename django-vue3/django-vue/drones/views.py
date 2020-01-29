@@ -15,6 +15,10 @@ import datetime
 Drone1GPS = '{ "Lat":52.5333923, "Lng":13.2595525 }'
 Drone2GPS = '{ "Lat":52.5333923, "Lng":13.2595525 }'
 
+Alarm1 = False
+Alarm2 = False
+Alarm3 = False
+
 def index(request):
     qs = Drone.objects.all()
     serializer = DroneSerializers(qs, many=True)
@@ -30,15 +34,30 @@ def Console(request):
     Drone = request.GET.get('Drone', '5')
     qs = Logs.objects.all().filter(Drone_id=1)
     Logserializer = LogsSerializers(qs, many=True)
+    
     return JsonResponse(Logserializer.data, safe=False)
 
 def DroneGPS(request):
     print(request.GET.get('Drone'))
     if request.GET.get('Drone') == "2":
-        return HttpResponse(Drone2GPS)
-    
-    
+        return HttpResponse(Drone2GPS) 
+    if request.GET.get('Drone') == "1":
+        return HttpResponse(Drone1GPS)  
     return HttpResponse('{"Lat":23}')
+
+def AlarmState(request):
+    print(Alarm3)
+    return HttpResponse(Alarm3)
+
+def ClearAllAlarms(request):
+    print("Alarms Cleared")
+    global Alarm1
+    global Alarm2
+    global Alarm3
+    Alarm1 = False
+    Alarm2 = False
+    Alarm3 = False  
+    return HttpResponse('Alarms Cleared')
 
 
 def detail(request, id):
@@ -67,19 +86,38 @@ def PublishMQTT(request):
 
     ############
 def on_message(client, userdata, message):
-    # print("message received " ,str(message.payload.decode("utf-8")))
-    # print("message topic=",message.topic)
-    # print("message qos=",message.qos)
+    #print("message received " ,str(message.payload.decode("utf-8")))
+    #print("message topic=",message.topic)
+    #print("message qos=",message.qos)
     #print("message retain flag=",message.retain)
+    if message.topic == "1/GPS":
+        print("GPS")
+        print(message.payload.decode("utf-8"))
+        global Drone1GPS
+        Drone1GPS = message.payload.decode("utf-8")
+
+        
     if message.topic == "Alarm1":
         print("Alarm1")
-        client.publish("1","Alarm1")
+        global Alarm1
+        if (Alarm1 ==False):
+            client.publish("1","Alarm1")
+            Alarm1 = True
+
     if message.topic == "Alarm2":
         print("Alarm2")
-        client.publish("1","Alarm2")
+        global Alarm2
+        if (Alarm2 == False):
+            client.publish("1","Alarm2")
+            Alarm2 = True
+
     if message.topic == "Alarm3":
         print("Alarm3")
-        client.publish("1","Alarm3")
+        global Alarm3 
+        if (Alarm3 == False):
+            client.publish("1","Alarm3")
+            Alarm3 = True
+        print(Alarm3)
     
   
 ########################################
