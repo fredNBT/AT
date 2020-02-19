@@ -2,8 +2,7 @@
   <v-app>
     <v-navigation-drawer v-model="drawer" app class="blue" style="margin-top:220px; padding-top:100px">
       <v-list style="flex" left>
-        <!-- <router-link to="/about">About</router-link> -->
-
+      
         <v-list-item class="SideDrawItems">
           <v-list-item-content >
             <v-list-item-title style="text-align:left">
@@ -24,7 +23,7 @@
           </v-list-item-content>
         </v-list-item>
 
-                <v-list-item class="SideDrawItems">
+        <v-list-item class="SideDrawItems">
           <v-list-item-content >
             <v-list-item-title style="text-align:left">
               <img src="../../src/assets/AccountIcon.png" style="width:35px; height: 35px; margin-right:20px">
@@ -43,7 +42,6 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-
       </v-list>
     </v-navigation-drawer>
 
@@ -52,13 +50,12 @@
       :is="currentComponent"
       @GoToMap="UpdateMap"
       v-bind:SingleDrone="SingleDrone"
-      style="margin-left:400px"
-    ></component>
+      style="margin-left:400px">
+      </component>
   </v-app>
 </template>
 
 <script>
-import MenuTitle from "./MenuTitle";
 import DashData from "./DashData";
 import DroneData from "./DroneData";
 import About from "./About";
@@ -69,7 +66,6 @@ export default {
   name: "App",
   props: ["SingleDrone"],
   components: {
-    MenuTitle,
     DashData,
     DroneData,
     AlarmData,

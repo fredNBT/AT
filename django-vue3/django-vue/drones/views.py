@@ -86,10 +86,10 @@ def PublishMQTT(request):
 
     ############
 def on_message(client, userdata, message):
-    #print("message received " ,str(message.payload.decode("utf-8")))
-    #print("message topic=",message.topic)
-    #print("message qos=",message.qos)
-    #print("message retain flag=",message.retain)
+    print("message received " ,str(message.payload.decode("utf-8")))
+    print("message topic=",message.topic)
+    print("message qos=",message.qos)
+    print("message retain flag=",message.retain)
     if message.topic == "1/GPS":
         print("GPS")
         print(message.payload.decode("utf-8"))

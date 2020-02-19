@@ -9,7 +9,6 @@
   </v-client-table>
   </div>
 </template>
-
 <script>
  import axios from 'axios';
 

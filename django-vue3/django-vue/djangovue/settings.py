@@ -47,9 +47,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'channels',
     'drones.apps.DronesConfig',
-    
-
-
 ]
 
 MIDDLEWARE = [

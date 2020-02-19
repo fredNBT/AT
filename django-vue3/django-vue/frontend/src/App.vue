@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <v-toolbar style="width=100%; padding:0px; height:120px">
       <img src="../src/assets/ArrowTec.png" alt style="width:100px;margin-top:50px">
       <v-app-bar-nav-icon class="grey--text" @click="drawer = !drawer" app v-bind:width="50">
@@ -21,12 +20,6 @@
         <v-btn class="hidden-md-and-down">Sign In</v-btn>
       </button>
     </v-toolbar>
-
-    <!-- <button
-      class="btn btn-primary btn-margin"
-      v-if="authenticated"
-      @click="privateMessage()"
-    >Call Private</button> -->
     {{ message }}
     <br>
     <Overview v-if="authenticated"></Overview>
@@ -37,11 +30,8 @@
 import AuthService from "./auth/AuthService";
 import axios from "axios";
 import Overview from "./components/Overview";
-
-
 const API_URL = "http://localhost:8000";
 const auth = new AuthService();
-
 export default {
   name: "app",
   components: {
