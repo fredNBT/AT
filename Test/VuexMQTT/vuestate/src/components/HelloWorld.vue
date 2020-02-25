@@ -3,10 +3,9 @@
     <div class="left">
       <h2>{{title}}</h2>
 
-      <button v-on:click="testclick">Add LInk</button>
-      <p id="AlarmP">No AlARM </p>
+      <p id="AlarmP">No AlARM</p>
       <form @submit.prevent="addLink">
-        <input class="link-input" type="text" placeholder="Add a Link" v-model="newLink">
+        <input class="link-input" type="text" placeholder="Add a Link" v-model="newMessage">
       </form>
       <ul>
         <li v-for="(link, index) in links" v-bind:key="index">{{link}}</li>
@@ -19,39 +18,21 @@
       <Stats/>
     </div>
     <p>value in fun: {{ fun }}</p>
-    <!-- <p id="p1"></p> -->
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import Stats from "@/components/Stats.vue";
-// import { Client } from "mqtt/";
-import { connect } from 'mqtt';
-
-// import { mqtt } from "mqtt";
+import { connect } from "mqtt";
 
 export default {
-  //  client = mqtt.connect("mqtt://78.47.164.96:9001");
-  // client.on("connect", function() {
-  //   console.log("connected");
-  //   client.subscribe("Alarm1", function(err) {
-  //     if (!err) {
-  //       client.publish("Alarm1", "Hello mqtt");
-  //     }
-  //   });
-  //   client.publish("Alarm1", "test message");
-  //   client.on("message", function(topic, message) {
-  //     this.addLink();
-  //     console.log(message.toString());
-  //   });
-  // });
-  res: '',
+  res: "",
   name: "HelloWorld",
   data() {
     return {
-      fun: 'fred',
-      newLink: "1"
+      fun: "fred",
+      newMessage: "1"
     };
   },
   components: {
@@ -59,63 +40,49 @@ export default {
   },
   computed: {
     ...mapState(["title", "links", "Alarms"]),
-
-    reversedMessage: function () {
-      // `this` points to the vm instance
-      return this.fun;
-    }
   },
   methods: {
     ...mapMutations(["ADD_LINK"]),
-    ...mapActions(["Add_ALARMS"]),
+    ...mapActions(["Add_ALARMS","fetchAlarms"]),
 
     init: function() {
+      this.fetchAlarms();
       var self = this;
-      
-      const client = connect('mqtt://78.47.164.96:9001');
+      console.log(this.Alarms);
+      // connect (protocol - IpAddress - port)
+      const client = connect("mqtt://78.47.164.96:9001");
+      // Initilize callback to fire when client is connected.
       client.on("connect", function() {
         console.log("connected");
-        client.subscribe("Alarm1", function(err) {
-          if (!err) {
-            //client.publish("Alarm1", "Hello mqtt");
-          }
+
+        //read each Alarm in database and subscribe to to the MQTT feed from each
+        self.Alarms.forEach((value, index) => {
+          console.log(value)
+          client.subscribe(value, function(err) {
         });
-        //client.publish("Alarm1", "test message");
+        });
       });
 
       client.on("message", (topic, message) => {
-         self.addLink();
+        // on message add to Vuex store
+        self.addMessage(topic);
         document.getElementById("AlarmP").innerHTML = topic;
-        console.log('value of fun =', self.fun);
+        console.log("value of fun =", self.fun);
         console.log(message.toString());
         return message;
       });
     },
 
-
-
-    addLink: function() {
-      this.ADD_LINK(this.newLink);
-      this.newLink = "hj";
-      
+    addMessage: function(topic) {
+      this.ADD_LINK(topic);
     },
-
-    testclick: function() {
-      this.addLink();
-      console.log("testclick fired");
-      return this.newLink;
-    }
   },
 
   mounted() {
     this.init();
   },
 
-  watch: {
-    fun: function(val) {
-      console.log('inside watch', val);
-    }
-  }
+
 };
 </script>
 

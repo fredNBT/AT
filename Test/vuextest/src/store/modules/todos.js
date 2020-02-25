@@ -32,7 +32,7 @@ const actions = {
         commit('setTodos', response.data);
     }, 
     async AddTodo({commit}, title){
-        const response = await axios.post( 'https://jsonplaceholder.typicode.com/todos', {title, 
+        const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {title, 
         completed:false });
         commit('newTodo', response.data);
     },

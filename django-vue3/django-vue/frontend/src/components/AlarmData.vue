@@ -1,10 +1,9 @@
 <template>
   <div>
-    <p>Alarms</p>
-    
+    <h2>Alarms</h2>
     <GmapMap
       ref="mymap"
-      :center="{lat:52.5333973, lng:13.2595595}"
+      :center="{lat:0, lng:0}"
       :zoom="17"
       map-type-id="satellite"
       style="width: 50vw; height:50vh"
@@ -54,15 +53,13 @@ export default {
       }
       else{this.marker[2].img = require("../../src/assets/logo.svg")}
     },
+    // resets All Alarms on the Backend
     ClearAllAlarms: function(){
-       
       const res =  axios.get("http://localhost:8000/drones/ClearAllAlarms");
-  
     }
   },
   async created() {
     setInterval(this.AlarmState, 1000);
-
     try {
       const res = await axios.get("http://localhost:8000/drones/Alarms");
     
