@@ -3,25 +3,25 @@
     <h2>Alarms</h2>
     <GmapMap
       ref="mymap"
-      :center="{lat:0, lng:0}"
+      :center="{lat:52.5324657, lng:13.2614147}"
       :zoom="17"
       map-type-id="satellite"
-      style="width: 50vw; height:50vh"
-    >
+      style="width: 50vw; height:50vh">
       <gmap-custom-marker :key="index" v-for="(m, index) in marker" :marker="m.pos">
         <img v-bind:src="m.img" style="width:50px; height: 50px">
       </gmap-custom-marker>
     </GmapMap>
+
     <v-btn  v-on:click="ClearAllAlarms()">Clear All Alarms</v-btn>
-    <v-client-table :columns="columns" :data="Alarms"></v-client-table>
+     <v-client-table :columns="columns" :data="Alarms"></v-client-table> 
     <v-btn style="height: 200px" v-on:click="test()">
       <span style="color:red" left>test</span>
     </v-btn>
-    
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions } from "vuex";
 import axios from "axios";
 import GmapCustomMarker from "vue2-gmap-custom-marker";
 //AlarmState
@@ -31,13 +31,15 @@ export default {
   props: ["headers"],
   data() {
     return {
-      Alarms: [],
       columns: ["id", "Alarm_Name", "Alarm_Type", "Lat", "Long"],
       marker: []
     };
   },
   components: {
     "gmap-custom-marker": GmapCustomMarker
+  },
+    computed: {
+    ...mapState(["title", "Messages", "Alarms"])
   },
   methods: {
     async AlarmState() {
@@ -59,23 +61,13 @@ export default {
     }
   },
   async created() {
-    setInterval(this.AlarmState, 1000);
-    try {
-      const res = await axios.get("http://localhost:8000/drones/Alarms");
-    
-      res.data.forEach(element =>
-        this.marker.push({
-          pos: { lat: element.Lat, lng: element.Long },
+    // on created Load all Alarms from 
+    this.Alarms.forEach((value, index) => {
+      this.marker.push({
+          pos: { lat: value.Lat, lng: value.Long },
           img: require("../../src/assets/logo.svg")
         })
-      );
-      this.Alarms = Object.entries(JSON.parse(res.data));
-    } catch (e) {
-      const res = await axios.get('http://localhost:8000/drones/Alarms')
-      let stringy = JSON.stringify(res.data)
-      console.log(stringy)
-      this.Alarms = JSON.parse(stringy)
-    }
+    });
   }
 };
 </script>

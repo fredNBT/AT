@@ -37,8 +37,8 @@
         :center="{lat:52.5333973, lng:13.2595595}"
         :zoom="17"
         map-type-id="satellite"
-        style="width: 50vw; height:50vh"
-      >
+        style="width: 50vw; height:50vh">
+        
         <gmap-custom-marker :marker="marker" >
           <img src="../../src/assets/DroneIcon2.gif" style="width:70px; height: 70px">
         </gmap-custom-marker>

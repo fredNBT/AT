@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>There are currently {{countLinks}}</p>
     <v-toolbar style="width=100%; padding:0px; height:120px">
       <img src="../src/assets/ArrowTec.png" alt style="width:100px;margin-top:50px">
       <v-app-bar-nav-icon class="grey--text" @click="drawer = !drawer" app v-bind:width="50">
@@ -27,6 +28,9 @@
 </template>
 
 <script>
+
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+import { connect } from "mqtt";
 import AuthService from "./auth/AuthService";
 import axios from "axios";
 import Overview from "./components/Overview";
@@ -37,10 +41,14 @@ export default {
   components: {
     Overview
   },
+  computed: {
+    ...mapGetters(["countLinks"]),
+    ...mapState(["title", "Messages", "Alarms"]),
+
+  },
   data() {
     this.handleAuthentication();
     this.authenticated = false;
-
     auth.authNotifier.on("authChange", authState => {
       this.authenticated = authState.authenticated;
     });
@@ -50,7 +58,11 @@ export default {
       message: ""
     };
   },
+
   methods: {
+    ...mapMutations(["ADD_MESSAGE"]),
+    ...mapActions(["Add_ALARMS", "fetchAlarms"]),
+    
     // this method calls the AuthService login() method
     login() {
       auth.login();
@@ -70,8 +82,39 @@ export default {
         .then(response => {
           this.message = response.data || "";
         });
+    },
+    init: function() {
+      this.fetchAlarms(); //Load all Alarms from Database
+      var self = this; // var self = this allows this keyword to be refrenced inside a callback
+      console.log(this.Alarms);
+      const client = connect("mqtt://78.47.164.96:9001"); // connect (protocol - IpAddress - port)
+
+      // Initilize callback to fire when client is connected.
+      client.on("connect", function() {
+        console.log("connected");
+        //read each Alarm in database and subscribe to to the MQTT feed from each
+        // Alarm_Name is the unique vaule for each alarm and is the Topic for MQTT
+        self.Alarms.forEach((value, index) => {
+          console.log("subscribed to ", value.Alarm_Name);
+          client.subscribe(value.Alarm_Name, function(err) {});
+        });
+      });
+
+      client.on("message", (topic, message) => {
+        // on message add to Vuex store
+        self.addMessage(topic);
+        
+        console.log("topic: ", topic, "Message: ", message.toString());
+      });
+    },
+      addMessage: function(topic) {
+      this.ADD_MESSAGE(topic);
     }
+  },
+   mounted() {
+    this.init();
   }
+  
 };
 </script>
 

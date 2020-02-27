@@ -7,6 +7,8 @@ import router from './router'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueResource from 'vue-resource';
+import store from './store'
+
 
 Vue.use(ClientTable);
 Vue.use(VueRouter);
@@ -24,6 +26,7 @@ Vue.config.productionTip = false
 new Vue({
   vuetify,
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
 

@@ -8,8 +8,8 @@
         <input class="link-input" type="text" placeholder="Add a Link" v-model="newMessage">
       </form>
       <ul>
-        <li v-for="(link, index) in links" v-bind:key="index">{{link}}</li>
-      </ul>
+        <li v-for="(Message, index) in Messages" v-bind:key="index">{{Message}}</li>
+      </ul>alarms from DataBase
       <ul>
         <li v-for="(Alarm, index) in Alarms" v-bind:key="index">{{Alarm}}</li>
       </ul>
@@ -17,7 +17,6 @@
     <div class="right">
       <Stats/>
     </div>
-    <p>value in fun: {{ fun }}</p>
   </div>
 </template>
 
@@ -27,39 +26,36 @@ import Stats from "@/components/Stats.vue";
 import { connect } from "mqtt";
 
 export default {
-  res: "",
   name: "HelloWorld",
   data() {
     return {
-      fun: "fred",
-      newMessage: "1"
+      newMessage: ""
     };
   },
   components: {
     Stats
   },
   computed: {
-    ...mapState(["title", "links", "Alarms"]),
+    ...mapState(["title", "Messages", "Alarms"])
   },
   methods: {
-    ...mapMutations(["ADD_LINK"]),
-    ...mapActions(["Add_ALARMS","fetchAlarms"]),
+    ...mapMutations(["ADD_MESSAGE"]),
+    ...mapActions(["Add_ALARMS", "fetchAlarms"]),
 
     init: function() {
-      this.fetchAlarms();
-      var self = this;
+      console.log("Init fired")
+      this.fetchAlarms(); //Load all Alarms from Database
+      var self = this; // var self = this allows this keyword to be refrenced inside a callback
       console.log(this.Alarms);
-      // connect (protocol - IpAddress - port)
-      const client = connect("mqtt://78.47.164.96:9001");
+      const client = connect("mqtt://78.47.164.96:9001"); // connect (protocol - IpAddress - port)
+      
       // Initilize callback to fire when client is connected.
       client.on("connect", function() {
         console.log("connected");
-
         //read each Alarm in database and subscribe to to the MQTT feed from each
         self.Alarms.forEach((value, index) => {
-          console.log(value)
-          client.subscribe(value, function(err) {
-        });
+          console.log("subscribed to ", value);
+          client.subscribe(value, function(err) {});
         });
       });
 
@@ -67,22 +63,18 @@ export default {
         // on message add to Vuex store
         self.addMessage(topic);
         document.getElementById("AlarmP").innerHTML = topic;
-        console.log("value of fun =", self.fun);
         console.log(message.toString());
-        return message;
       });
     },
 
     addMessage: function(topic) {
-      this.ADD_LINK(topic);
-    },
+      this.ADD_MESSAGE(topic);
+    }
   },
 
   mounted() {
     this.init();
-  },
-
-
+  }
 };
 </script>
 

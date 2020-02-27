@@ -1,12 +1,10 @@
 <template>
-  <div class="hello">
-    <div class="left">
+  <div>
+    <div>
       <h2> diffrent component</h2>
       <p>There are currently {{countLinks}} </p>
     </div>
-
     <div class="right">
-
     </div>
   </div>
 </template>
