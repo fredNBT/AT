@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import axios from 'axios'
 Vue.use(Vuex)
 
-
 export default new Vuex.Store({
   /* 
 Messages [] holds the MQTT messaes from the Alarms
@@ -17,18 +16,21 @@ Messages [] holds the MQTT messaes from the Alarms
   // Stubbed in computed property
   getters: {
     countLinks: state => {
-      return state.Messages.length
+      return state.Messages
     }
   },
   mutations: {
-    ADD_MESSAGE: (state, message) => { state.Messages.push(message) },
+    ADD_MESSAGE: (state, message) => { 
+      // check if Alarm signal is already in Messages if not add to it.
+      if (!state.Messages.includes(message)){
+        state.Messages.push(message)
+      }
+    },
     setAlarms: (state, Alarms) => {
       Alarms.forEach(AlarmItem => {
-        console.log(AlarmItem.Alarm_Name)
         state.Alarms.push(AlarmItem)
       });
     },
-
   },
   actions: {
     // Load All Alarms from the Database
@@ -42,6 +44,3 @@ Messages [] holds the MQTT messaes from the Alarms
   modules: {
   }
 })
-
-
-

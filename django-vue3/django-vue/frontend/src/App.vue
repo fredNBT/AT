@@ -103,7 +103,6 @@ export default {
       client.on("message", (topic, message) => {
         // on message add to Vuex store
         self.addMessage(topic);
-        
         console.log("topic: ", topic, "Message: ", message.toString());
       });
     },

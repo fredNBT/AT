@@ -3,7 +3,7 @@
     <h2>Alarms</h2>
     <GmapMap
       ref="mymap"
-      :center="{lat:52.5324657, lng:13.2614147}"
+      :center="{lat:52.5324657, lng:13.2614147}" 
       :zoom="17"
       map-type-id="satellite"
       style="width: 50vw; height:50vh">
@@ -11,7 +11,6 @@
         <img v-bind:src="m.img" style="width:50px; height: 50px">
       </gmap-custom-marker>
     </GmapMap>
-
     <v-btn  v-on:click="ClearAllAlarms()">Clear All Alarms</v-btn>
      <v-client-table :columns="columns" :data="Alarms"></v-client-table> 
     <v-btn style="height: 200px" v-on:click="test()">
@@ -24,15 +23,15 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 import axios from "axios";
 import GmapCustomMarker from "vue2-gmap-custom-marker";
-//AlarmState
+
 
 export default {
   name: "app",
   props: ["headers"],
   data() {
     return {
-      columns: ["id", "Alarm_Name", "Alarm_Type", "Lat", "Long"],
-      marker: []
+      columns: ["id", "Alarm_Name", "Alarm_Type", "Lat", "Long"], // columns to link to the vuetify table
+      marker: [] // Pins showing where the Alarms Are Based
     };
   },
   components: {

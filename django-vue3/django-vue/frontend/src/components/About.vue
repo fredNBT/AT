@@ -1,5 +1,5 @@
 <template>
-  <h1>About us.co.uk</h1>
+  <h1>ArrowTec </h1>
 </template>
 
 <script>
