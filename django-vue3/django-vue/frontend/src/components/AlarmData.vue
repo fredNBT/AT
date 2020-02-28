@@ -7,7 +7,7 @@
       :zoom="17"
       map-type-id="satellite"
       style="width: 50vw; height:50vh">
-      <gmap-custom-marker :key="index" v-for="(m, index) in MappingAlarms" :marker="m.pos">
+      <gmap-custom-marker :key="index" v-for="(m, index) in MappingAlarms" :marker="m.pos" @click.native="ClearAllAlarms">
         <img v-bind:src="m.img" style="width:50px; height: 50px">
       </gmap-custom-marker>
     </GmapMap>
@@ -42,6 +42,7 @@ export default {
   methods: {
     // resets All Alarms on the Backend
     ClearAllAlarms: function(){
+      alert("alarms cleared")
       const res =  axios.get("http://localhost:8000/drones/ClearAllAlarms");
     }
   },

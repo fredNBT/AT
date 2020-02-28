@@ -37,14 +37,26 @@
         :center="{lat:52.5333973, lng:13.2595595}"
         :zoom="17"
         map-type-id="satellite"
-        style="width: 50vw; height:50vh">
-        
-        <gmap-custom-marker :marker="marker" >
+        style="width: 50vw; height:50vh"
+      >
+        <gmap-custom-marker
+          :key="index"
+          v-for="(m, index) in MappingAlarms"
+          :marker="m.pos"
+          @click.native="ClearAllAlarms"
+        >
+          <img v-bind:src="m.img" style="width:50px; height: 50px">
+        </gmap-custom-marker>
+
+        <gmap-custom-marker :marker="marker">
           <img src="../../src/assets/DroneIcon2.gif" style="width:70px; height: 70px">
         </gmap-custom-marker>
       </GmapMap>
 
-      <div id="ConsoleLogDiv" style="height:50vh;overflow-y: scroll; width: 20vw; background-color:black; color:white; margin-left:5px;">
+      <div
+        id="ConsoleLogDiv"
+        style="height:50vh;overflow-y: scroll; width: 20vw; background-color:black; color:white; margin-left:5px;"
+      >
         <p>Console</p>
         <div
           style="display:flex; "
@@ -63,6 +75,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions } from "vuex";
 import axios from "axios";
 import GmapCustomMarker from "vue2-gmap-custom-marker";
 
@@ -82,18 +95,17 @@ export default {
   components: {
     "gmap-custom-marker": GmapCustomMarker
   },
+  computed: {
+    ...mapState(["title", "Messages", "Alarms", "MappingAlarms"])
+  },
   created() {
     setInterval(this.FillConsole, 1000);
     setInterval(this.DroneGPS, 1000);
   },
   mounted() {
-    this.$refs.mymap.$mapPromise.then(() => {
-    });
+    this.$refs.mymap.$mapPromise.then(() => {});
   },
-  destroyed(){
-
-
-  },
+  destroyed() {},
 
   methods: {
     async FillConsole() {
@@ -110,16 +122,16 @@ export default {
       }
     },
 
-    async DroneGPS(){
+    async DroneGPS() {
       const res = await axios.get("http://localhost:8000/drones/DroneGPS", {
         params: {
           Drone: this.SingleDrone
         }
       });
-      let stringy = JSON.stringify(res.data)
-      console.log(stringy)
-      var obj = JSON.parse(stringy)
-      this.marker = {lat: obj.Lat, lng: obj.Long}
+      let stringy = JSON.stringify(res.data);
+      console.log(stringy);
+      var obj = JSON.parse(stringy);
+      this.marker = { lat: obj.Lat, lng: obj.Long };
     },
     greet: function(rowID) {
       this.$emit("GoToMap", "Map");
