@@ -7,7 +7,7 @@
       :zoom="17"
       map-type-id="satellite"
       style="width: 50vw; height:50vh">
-      <gmap-custom-marker :key="index" v-for="(m, index) in marker" :marker="m.pos">
+      <gmap-custom-marker :key="index" v-for="(m, index) in MappingAlarms" :marker="m.pos">
         <img v-bind:src="m.img" style="width:50px; height: 50px">
       </gmap-custom-marker>
     </GmapMap>
@@ -22,8 +22,7 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import axios from "axios";
-import GmapCustomMarker from "vue2-gmap-custom-marker";
-
+import GmapCustomMarker from "vue2-gmap-custom-marker"; 
 
 export default {
   name: "app",
@@ -38,28 +37,16 @@ export default {
     "gmap-custom-marker": GmapCustomMarker
   },
     computed: {
-    ...mapState(["title", "Messages", "Alarms"])
+    ...mapState(["title", "Messages", "Alarms","MappingAlarms"])
   },
   methods: {
-    async AlarmState() {
-      const res = await axios.get("http://localhost:8000/drones/AlarmState", {
-        params: {
-          Drone: this.SingleDrone
-        }
-      });
-      let stringy = JSON.stringify(res.data);
-      console.log(stringy)
-      if (stringy == '"True"'){
-        this.marker[2].img = require("../../src/assets/Tracking.gif")
-      }
-      else{this.marker[2].img = require("../../src/assets/logo.svg")}
-    },
     // resets All Alarms on the Backend
     ClearAllAlarms: function(){
       const res =  axios.get("http://localhost:8000/drones/ClearAllAlarms");
     }
   },
   async created() {
+    console.log("Alarms",this.Alarms)
     // on created Load all Alarms from 
     this.Alarms.forEach((value, index) => {
       this.marker.push({
@@ -67,6 +54,7 @@ export default {
           img: require("../../src/assets/logo.svg")
         })
     });
+    console.log("Marker",this.marker)
   }
 };
 </script>
