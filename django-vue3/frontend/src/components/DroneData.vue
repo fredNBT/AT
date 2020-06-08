@@ -34,7 +34,7 @@ export default {
       console.error(e)
       const res = await axios.get('http://localhost:8000/drones/')
       let stringy = JSON.stringify(res.data)
-      console.log(stringy)
+      //console.log(stringy)
       this.drones = JSON.parse(stringy)
       console.log(this.drones)
     }

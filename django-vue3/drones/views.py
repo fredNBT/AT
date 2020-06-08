@@ -24,6 +24,11 @@ def index(request):
     serializer = DroneSerializers(qs, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+def DronesDetails(request):
+    qs = Drone.objects.all()
+    serializer = DroneSerializers(qs, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
 def AlarmsDetails(request):
     qs = Alarms.objects.all()
     serializer = AlarmsSerializers(qs, many=True)
@@ -50,13 +55,7 @@ def AlarmState(request):
     return HttpResponse(Alarm3)
 
 def ClearAllAlarms(request):
-    print("Alarms Cleared")
-    global Alarm1
-    global Alarm2
-    global Alarm3
-    Alarm1 = False
-    Alarm2 = False
-    Alarm3 = False  
+
     return HttpResponse('Alarms Cleared')
 
 
@@ -97,27 +96,27 @@ def on_message(client, userdata, message):
         Drone1GPS = message.payload.decode("utf-8")
 
         
-    if message.topic == "Alarm1":
-        print("Alarm1")
-        global Alarm1
-        if (Alarm1 ==False):
-            client.publish("1","Alarm1")
-            Alarm1 = True
+    # if message.topic == "Alarm1":
+    #     print("Alarm1")
+    #     global Alarm1
+    #     if (Alarm1 ==False):
+    #         client.publish("1","Alarm1")
+    #         Alarm1 = True
 
-    if message.topic == "Alarm2":
-        print("Alarm2")
-        global Alarm2
-        if (Alarm2 == False):
-            client.publish("1","Alarm2")
-            Alarm2 = True
+    # if message.topic == "Alarm2":
+    #     print("Alarm2")
+    #     global Alarm2
+    #     if (Alarm2 == False):
+    #         client.publish("1","Alarm2")
+    #         Alarm2 = True
 
-    if message.topic == "Alarm3":
-        print("Alarm3")
-        global Alarm3 
-        if (Alarm3 == False):
-            client.publish("1","Alarm3")
-            Alarm3 = True
-        print(Alarm3)
+    # if message.topic == "Alarm3":
+    #     print("Alarm3")
+    #     global Alarm3 
+    #     if (Alarm3 == False):
+    #         client.publish("1","Alarm3")
+    #         Alarm3 = True
+    #     print(Alarm3)
     
 
 # Initilise the MQTT   

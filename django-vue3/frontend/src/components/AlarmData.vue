@@ -15,19 +15,61 @@
           v-for="(m, index) in MappingAlarms"
           :marker="m.pos"
           :clickable="true"
-          @click.native="OpenPannel(m)"
+          @click.native="OpenPannel(m, 'Alarm')"
+        >
+          <img v-bind:src="m.img" style="width:50px; height: 50px">
+
+        </gmap-custom-marker>
+          <!-- Create a Drone marker for every Item in the DB -->
+          <gmap-custom-marker
+          :key="index"
+          v-for="(m, index) in MappingDrones"
+          :marker="m.pos"
+          :clickable="true"
+          @click.native="OpenPannel(m, 'Drone')"
         >
           <img v-bind:src="m.img" style="width:50px; height: 50px">
         </gmap-custom-marker>
+
       </GmapMap>
       <div
-        id="AlarmPanel"
-        style="height:50vh;overflow-y: scroll; width: 20vw; margin-left:5px; visibility: hidden;"
+        id="AlarmPanel" style="height:50vh;overflow-y: scroll; width: 20vw; margin-left:5px; visibility: hidden;"
       >
         <h2 id="SelectedAlarmHeader">{{SelectedAlarm.AlarmName}}</h2>
-        <div style="flex">
-          <v-btn class="blue white--text" @click="ResetAlarm()">Reset Alarm</v-btn>
-          <v-btn class="blue white--text">Disable Alarm</v-btn>
+        <div  id="AlarmButtons" style="visibility: hidden;">
+          <v-btn class="blue white--text" @click="SendCommand('0')">Reset Alarm</v-btn>
+          <v-btn class="blue white--text" @click="SendCommand('2')">Disable Alarm</v-btn>
+        </div>
+
+          <div  id="DroneButtons" style="visibility: hidden;">
+          <h2 id="SelectedAlarmHeader">{{SelectedAlarm.DroneName}}</h2>
+
+          <div>
+            <v-btn class="blue white--text" @click="SendCommand('0')">RTL</v-btn>
+            <v-btn class="blue white--text" @click="SendCommand('2')">Disable Drone</v-btn>
+          </div>
+
+          <div style="margin-top:100px">
+          
+            <div style="display: flex; justify-content: space-around;">
+              <h6 style="color:#329EF4; float:left">Latitude</h6>
+              <h5>{{MappingDrones[SelectedAlarmIndex].pos.lat}}</h5>
+            </div>
+             <div style="display: flex; justify-content: space-around;">
+              <h6 style="color:#329EF4 ; float:left">Longitude</h6>
+              <h5>{{MappingDrones[SelectedAlarmIndex].pos.lng}}</h5>
+            </div>
+            <div style="display: flex; justify-content: space-around;">
+              <h6 style="color:#329EF4 ; float:left">Speed</h6>
+              <h5>{{MappingDrones[SelectedAlarmIndex].speed}} Kmh</h5>
+            </div>
+            <div style="display: flex; justify-content: space-around;">
+              <h6 style="color:#329EF4 ; float:left">Alt</h6>
+              <h5>{{MappingDrones[SelectedAlarmIndex].pos.alt}} m</h5>
+            </div>
+            
+          
+          </div>
         </div>
       </div>
     </div>
@@ -37,6 +79,7 @@
     <v-btn style="height: 200px" v-on:click="test()">
       <span style="color:red" left>test</span>
     </v-btn>
+    
   </div>
 </template>
 
@@ -47,7 +90,6 @@ import GmapCustomMarker from "vue2-gmap-custom-marker";
 import { connect } from "mqtt";
 var mqtt = require('mqtt');
 
-
 export default {
   name: "app",
   props: ["headers"],
@@ -55,14 +97,15 @@ export default {
     return {
       columns: ["id", "Alarm_Name", "Alarm_Type", "Lat", "Long"], // columns to link to the vuetify table
       marker: [], // Pins showing where the Alarms Are Based
-      SelectedAlarm: ""
+      SelectedAlarm: "", // Hold the current clicked alarm
+      SelectedAlarmIndex:"0" // Hold the current clicked alarm index
     };
   },
   components: {
     "gmap-custom-marker": GmapCustomMarker
   },
   computed: {
-    ...mapState(["title", "Messages", "Alarms", "MappingAlarms"])
+    ...mapState(["title", "Messages", "Alarms", "MappingAlarms", "MappingDrones"])
   },
   methods: {
     // resets All Alarms on the Backend
@@ -70,16 +113,33 @@ export default {
       alert("alarms cleared");
       const res = axios.get("http://localhost:8000/drones/ClearAllAlarms");
     },
-    // connects again to Mosquito and resets alarm.
-      ResetAlarm: function() {
+    
+    // connects again to Mosquito and sneds alarm code.
+      SendCommand: function(command) {
       const client = connect("mqtt://78.47.164.96:9001");
-      client.publish(this.SelectedAlarm.AlarmName,"0")
+      client.publish(this.SelectedAlarm.AlarmName,command)
     },
+
     //Opens pannel to disable the alarm.
-    OpenPannel: function(m) {
+    OpenPannel: function(marker, item) {
       // pass all the details to the alarmPanel
-      this.SelectedAlarm = m;
-      document.getElementById("AlarmPanel").style.visibility = "visible";
+      if(item == 'Alarm'){
+        this.SelectedAlarm = marker;
+      document.getElementById("AlarmPanel").style.visibility = "visible"; //AlarmButtons
+      document.getElementById("DroneButtons").style.visibility = "hidden";
+      document.getElementById("AlarmButtons").style.visibility = "visible";
+           }
+      if(item == 'Drone'){
+        console.log('marker:',marker)
+        this.SelectedAlarm = marker;
+        this.SelectedAlarmIndex = this.MappingDrones.indexOf(marker);
+        document.getElementById("AlarmPanel").style.visibility = "visible";
+        document.getElementById("AlarmButtons").style.visibility = "hidden";
+        document.getElementById("DroneButtons").style.visibility = "visible";
+
+   
+      }
+      
     }
   },
 
@@ -138,5 +198,17 @@ th:nth-child(3) {
 
 .VueTables__child-row-toggler--open::before {
   content: "-";
+}
+
+.button {
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
 }
 </style>

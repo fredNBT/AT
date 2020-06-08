@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     ...mapGetters(["countLinks"]),
-    ...mapState(["title", "Messages", "Alarms"])
+    ...mapState(["title", "Messages", "Alarms", "Drones"])
   },
   data() {
     this.handleAuthentication();
@@ -59,7 +59,7 @@ export default {
 
   methods: {
     ...mapMutations(["ADD_MESSAGE"]),
-    ...mapActions(["Add_ALARMS", "fetchAlarms"]),
+    ...mapActions(["Add_ALARMS", "fetchAlarms", "fetchDrones"]),
 
     // this method calls the AuthService login() method
     login() {
@@ -82,6 +82,7 @@ export default {
         });
     },
     init: function() {
+      this.fetchDrones();
       this.fetchAlarms(); //Load all Alarms from Database
       var self = this; // var self = this allows this keyword to be refrenced inside a callback
       const client = connect("mqtt://78.47.164.96:9001"); // connect (protocol - IpAddress - port)
@@ -97,6 +98,11 @@ export default {
           console.log("subscribed to ", value.Alarm_Name);
           client.subscribe(value.Alarm_Name, function(err) {});
         });
+
+        self.Drones.forEach((valuee, index) => {
+          console.log("subscribed to ", valuee.Name);
+          client.subscribe(valuee.Name, function(err) {});
+        });
       });
 
       client.on("message", (topic, message) => {
@@ -105,6 +111,7 @@ export default {
         console.log("topic: ", topic, "Message: ", message.toString());
       });
     },
+
     addMessage: function(topic, message) {
       this.ADD_MESSAGE([topic, message.toString()]);
     }

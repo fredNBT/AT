@@ -6,7 +6,7 @@ from .models import Alarms
 class DroneSerializers(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Drone
-        fields = ('id', 'Name', 'Description','LastOrder','Region')
+        fields = ('id', 'Name', 'Description','LastOrder','Region','Lat','Lon')
 
 class AlarmsSerializers(serializers.HyperlinkedModelSerializer):
     class Meta:

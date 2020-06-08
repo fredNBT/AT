@@ -31,7 +31,6 @@
     
   </v-container>
 </template>
-
 <script>
 export default {
   name: "Comp1",
